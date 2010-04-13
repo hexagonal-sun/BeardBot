@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import bot, re
+import bot, re, shelve
 
 # Match a user requesting to know how a person speaks
 howDoesUserSound = re.compile("(how|what) does (\w+) (sound|speak|talk)( like)?\??",
@@ -12,57 +12,89 @@ howDoISound = re.compile("(how|what) do I (sound|speak|talk)( like)?\??",
 # Match a user requesting to know the order of the chain
 whatOrder = re.compile("how big is your beard\??", re.IGNORECASE)
 
+# Match a user requesting a differrent order beard
+growBeardNow = re.compile("grow your beard( now)?!?", re.IGNORECASE)
+shaveBeardNow = re.compile("shave (your beard)?( now)?!?", re.IGNORECASE)
+
 requiredBeardBotVersion = 0.1
 class BeardBotModule(bot.BeardBotModule):
+	def __init__(self, bot):
+		bot.BeardBotModule(bot)
+		self.options = shelve.open(bot.channel + "_beardy.db")
 	# A dictionary of beards for each chat member
 	beards = {}
 	
-	# The order of beards created
-	_order = 1
-	
 	def on_channel_message(self, source_name, source_host, message):
 		if source_name not in self.beards:
-			self.beards[source_name] = Beard(self.order)
-		
+			self.load_beard(source_name)
 		# Train the user's beard with their latest message
 		self.beards[source_name].train(message)
 	
 	def on_addressed_message(self, source_name, source_host, message):
+		# Check against regexes
 		userMatch = howDoesUserSound.match(message)
 		selfMatch = howDoISound.match(message)
 		orderMatch = whatOrder.match(message)
+		growMatch = growBeardNow.match(message)
+		shaveMatch = shaveBeardNow.match(message)
 		
 		if selfMatch:
 			self.speak_like(source_name)
 		elif userMatch:
 			self.speak_like(userMatch.groups()[1].lower())
 		elif orderMatch:
-			if self.order == 1:
-				postfix = "st"
-			elif self.order == 2:
-				postfix = "nd"
-			elif self.order == 3:
-				postfix = "rd"
-			else:
-				postfix = "th"
-			self.bot.say("I have a %i%s order beard."%(self.order,postfix))
+			self.announce_beard_size()
+		elif growMatch:
+			self.order = 2
+			self.announce_beard_size()
+		elif shaveMatch:
+			self.order = 1
+			self.announce_beard_size()
+	
+	def announce_beard_size(self):
+		if self.order == 1:
+			postfix = "st"
+		elif self.order == 2:
+			postfix = "nd"
+		elif self.order == 3:
+			postfix = "rd"
+		else:
+			postfix = "th"
+		self.bot.say("I have a %i%s order beard."%(self.order,postfix))
+	
+	def load_beard(self, user):
+		"""
+		Create a new beard for the given user, loading past messages from the log if
+		possible.
+		"""
+		self.beards[user] = Beard(self.order)
+		if "log" in self.bot.modules:
+			# Pre-train the beard with old conversations
+			logger = self.bot.modules["log"].logger
+			for datetime, message in logger.get_user_log(user, 0):
+				self.beards[user].train(message)
 	
 	def speak_like(self, user):
 		if user not in self.beards:
-			self.bot.say("Never heard of this %s you speak of."%(user,))
+			self.load_beard(user)
+		
+		sentence = self.beards[user].generate()
+		if sentence == None:
+			self.bot.say("No idea.")
 		else:
-			sentence = self.beards[user].generate()
-			if sentence == None:
-				self.bot.say("No idea.")
-			else:
-				self.bot.say("Like this: \"%s\""%(sentence,))
+			self.bot.say("Like this: \"%s\""%(sentence,))
 	
 	def set_order(self, order):
 		self.beards = {}
-		self._order = order
+		self.options["order"] = order
 	def get_order(self):
-		return self._order
+		if "order" not in self.options:
+			self.options["order"] = 1
+		return self.options["order"]
 	order = property(fset=set_order, fget=get_order)
+	
+	def die(self):
+		self.options.close()
 
 ################################################################################
 

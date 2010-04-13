@@ -11,6 +11,8 @@ class BeardBotModule(object):
 		pass
 	def on_addressed_message(self, source_name, source_host, message):
 		pass
+	def on_private_message(self, source_name, source_host, message):
+		pass
 	def die(self):
 		pass
 
@@ -50,12 +52,15 @@ class BeardBot(SingleServerIRCBot):
 			c.join(self.channel)
 			#c.privmsg(self.channel, "Hi there, I'm beardy. If I'm annoying, tell me to die.")
 		def on_privmsg(self, c, e):
-			print "---"
-			print e.eventtype()
-			print e.source()
-			print e.target()
-			print e.arguments()
-			if e.arguments()[0] == "die":
+			# Handle a message recieved from the channel
+			source_name = nm_to_n(e.source()).lower()
+			source_host = nm_to_h(e.source())
+			message = e.arguments()[0]
+			
+			for module in self.modules.itervalues():
+				module.on_private_message(source_name, source_host, message)
+			
+			if message == "die":
 				self.die("Someone killed me... It was you, " + nm_to_n(e.source()))
 		
 		def on_pubmsg(self, c, e):
@@ -95,9 +100,9 @@ class BeardBot(SingleServerIRCBot):
 			del self.modules[module_name]
 		
 		def die(self, *args, **kwargs):
-			SingleServerIRCBot.die(self, *args, **kwargs)
 			for module in self.modules.itervalues():
 				module.die()
+			SingleServerIRCBot.die(self, *args, **kwargs)
 
 def main():
 	bot = BeardBot("#uhc", "irc.quakenet.org")
