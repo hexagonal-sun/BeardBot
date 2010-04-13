@@ -24,8 +24,8 @@ class Logger(object):
 		c.execute("""
 			CREATE TABLE IF NOT EXISTS
 				ChatLog (
-					id INT AUTO INCREMENT PRIMARY KEY,
-					dateTime DATETIME,
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					dateTime INT,
 					user VARCHAR(9),
 					message TEXT
 				)
@@ -34,12 +34,18 @@ class Logger(object):
 	
 	def log(self, user, message):
 		#self.messages[user].append((time.time(), message))
-		pass
+		c = self.db.cursor()
+		c.execute("""
+			INSERT INTO ChatLog ( dateTime, user, message)
+			VALUES ( ?, ?, ? )
+		""", (time.time(), user, message))
+		self.db.commit()
 	
 	def close(self):
 		self.db.close()
 
 if __name__=="__main__":
 	l = Logger("test")
+	l.log("heathcj9", "Hi there")
 	l.close()
 	
