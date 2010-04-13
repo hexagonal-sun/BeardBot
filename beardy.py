@@ -1,8 +1,73 @@
 #!/usr/bin/python
+
+import bot, re
+
+# Match a user requesting to know how a person speaks
+howDoesUserSound = re.compile("(how|what) does (\w+) (sound|speak|talk)( like)?\??",
+                              re.IGNORECASE)
+
+# Match a user requesting to know how they speak
+howDoISound = re.compile("(how|what) do I (sound|speak|talk)( like)?\??",
+                         re.IGNORECASE)
+# Match a user requesting to know the order of the chain
+whatOrder = re.compile("how big is your beard\??", re.IGNORECASE)
+
+requiredBeardBotVersion = 0.1
+class BeardBotModule(bot.BeardBotModule):
+	# A dictionary of beards for each chat member
+	beards = {}
+	
+	# The order of beards created
+	_order = 1
+	
+	def on_channel_message(self, source_name, source_host, message):
+		if source_name not in self.beards:
+			self.beards[source_name] = Beard(self.order)
+		
+		# Train the user's beard with their latest message
+		self.beards[source_name].train(message)
+	
+	def on_addressed_message(self, source_name, source_host, message):
+		userMatch = howDoesUserSound.match(message)
+		selfMatch = howDoISound.match(message)
+		orderMatch = whatOrder.match(message)
+		
+		if selfMatch:
+			self.speak_like(source_name)
+		elif userMatch:
+			self.speak_like(userMatch.groups()[1].lower())
+		elif orderMatch:
+			if self.order == 1:
+				postfix = "st"
+			elif self.order == 2:
+				postfix = "nd"
+			elif self.order == 3:
+				postfix = "rd"
+			else
+				postfix = "th"
+			self.bot.say("I have a %i%s order beard."%(self.order,postfix))
+	
+	def speak_like(self, user):
+		if user not in self.beards:
+			self.bot.say("Never heard of this %s you speak of."%(user,))
+		else:
+			sentence = self.beards[user].generate()
+			if sentence == None:
+				self.bot.say("No idea.")
+			else:
+				self.bot.say("Like this: \"%s\""%(sentence,))
+	
+	def set_order(self, order):
+		self.beards = {}
+		self._order = order
+	def get_order(self):
+		return self._order
+	order = property(fset=set_order, fget=get_order)
+
+################################################################################
+
 # Beardy: Uses Markov chains to generate random sentences given a particular
 # piece of test data. Fun stuff.
-#
-# Create a Beard object 
 
 import sys, random
 
@@ -135,18 +200,18 @@ class Beard(object):
 		if len(self.words) == 0:
 			return None
 		
-		output = ""
+		output = []
 		word = self.getWord(tuple([True]))
 		endWord = self.getWord(tuple([False]))
 		while word.__hash__() != endWord.__hash__():
 			if len(word.relations) != 0:
 				if word.word[0] != True:
-					output += word.word[0] + " "
+					output.append(word.word[0])
 				word = weightedPick(word.relations)
 			else:
-				output += " ".join(word.word)
+				output.append(" ".join(word.word))
 				break
-		return output
+		return " ".join(output)
 
 if __name__=="__main__":
 	if len(sys.argv) == 3:
