@@ -62,10 +62,18 @@ class BeardBot(SingleServerIRCBot):
 			message = e.arguments()[0]
 			
 			for module in self.modules.values():
-				module.on_private_message(source_name, source_host, message)
+				try:
+					module.on_private_message(source_name, source_host, message)
+				except Exception, e:
+					print e
 			
 			if message == "die":
 				self.die("Someone killed me... It was you, " + nm_to_n(e.source()))
+			elif message == "panic:reloadadmin":
+				try:
+					self.load_module("admin")
+				except Exception, e:
+					print e
 		
 		def on_pubmsg(self, c, e):
 			# Handle a message recieved from the channel
@@ -81,13 +89,17 @@ class BeardBot(SingleServerIRCBot):
 			
 			# Alert each module that a message has arrived
 			for module in self.modules.values():
-				if addressed_to_BeardBot:
-					module.on_addressed_message(source_name, source_host, message)
-				else:
-					module.on_channel_message(source_name, source_host, message)
+				try:
+					if addressed_to_BeardBot:
+						module.on_addressed_message(source_name, source_host, message)
+					else:
+						module.on_channel_message(source_name, source_host, message)
+				except Exception, e:
+					print e
 		
 		def load_module(self, module_name):
 			module = __import__(module_name)
+			reload(module)
 			if module_name in self.modules:
 				self.unload_module(module_name)
 			
