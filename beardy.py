@@ -18,9 +18,9 @@ shaveBeardNow = re.compile("shave (your beard)?( now)?!?", re.IGNORECASE)
 
 requiredBeardBotVersion = 0.1
 class BeardBotModule(bot.BeardBotModule):
-	def __init__(self, bot):
-		bot.BeardBotModule(bot)
-		self.options = shelve.open(bot.channel + "_beardy.db")
+	def __init__(self, theBot):
+		bot.BeardBotModule.__init__(self, theBot)
+		self.options = shelve.open(self.bot.channel + "_beardy.db")
 	# A dictionary of beards for each chat member
 	beards = {}
 	

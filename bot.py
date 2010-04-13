@@ -45,6 +45,10 @@ class BeardBot(SingleServerIRCBot):
 			"""Send a message to the channel"""
 			self.connection.privmsg(self.channel, message)
 		
+		def pm(self, user, message):
+			"""Send a message to a user"""
+			self.connection.privmsg(user, message)
+		
 		def on_nicknameinuse(self, c, e):
 			c.nick(c.get_nickname() + "_")
 		
@@ -57,7 +61,7 @@ class BeardBot(SingleServerIRCBot):
 			source_host = nm_to_h(e.source())
 			message = e.arguments()[0]
 			
-			for module in self.modules.itervalues():
+			for module in self.modules.values():
 				module.on_private_message(source_name, source_host, message)
 			
 			if message == "die":
@@ -76,7 +80,7 @@ class BeardBot(SingleServerIRCBot):
 				message = message.split(": ", 1)[-1]
 			
 			# Alert each module that a message has arrived
-			for module in self.modules.itervalues():
+			for module in self.modules.values():
 				if addressed_to_BeardBot:
 					module.on_addressed_message(source_name, source_host, message)
 				else:
@@ -85,7 +89,7 @@ class BeardBot(SingleServerIRCBot):
 		def load_module(self, module_name):
 			module = __import__(module_name)
 			if module_name in self.modules:
-				unload_module(module_name)
+				self.unload_module(module_name)
 			
 			if module.requiredBeardBotVersion > __version__:
 				raise IncompatibleModuleError("%s requires BeardBot version %s"%(
@@ -100,7 +104,7 @@ class BeardBot(SingleServerIRCBot):
 			del self.modules[module_name]
 		
 		def die(self, *args, **kwargs):
-			for module in self.modules.itervalues():
+			for module in self.modules.values():
 				module.die()
 			SingleServerIRCBot.die(self, *args, **kwargs)
 
@@ -108,6 +112,7 @@ def main():
 	bot = BeardBot("#uhc", "irc.quakenet.org")
 	bot.load_module("log")
 	bot.load_module("beardy")
+	bot.load_module("admin")
 	bot.start()
 
 if __name__ == "__main__":
