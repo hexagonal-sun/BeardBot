@@ -33,7 +33,6 @@ class Logger(object):
 		self.db.commit()
 	
 	def log(self, user, message):
-		#self.messages[user].append((time.time(), message))
 		c = self.db.cursor()
 		c.execute("""
 			INSERT INTO ChatLog ( dateTime, user, message)

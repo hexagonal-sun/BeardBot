@@ -43,7 +43,7 @@ class BeardBotModule(bot.BeardBotModule):
 				postfix = "nd"
 			elif self.order == 3:
 				postfix = "rd"
-			else
+			else:
 				postfix = "th"
 			self.bot.say("I have a %i%s order beard."%(self.order,postfix))
 	
