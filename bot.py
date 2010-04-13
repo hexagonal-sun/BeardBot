@@ -68,8 +68,10 @@ class BeardBot(SingleServerIRCBot):
 					print e
 			
 			if message == "die":
+				# Force the bot to die
 				self.die("Someone killed me... It was you, " + nm_to_n(e.source()))
 			elif message == "panic:reloadadmin":
+				# Restart the admin module if something is going wrong
 				try:
 					self.load_module("admin")
 				except Exception, e:
@@ -98,6 +100,9 @@ class BeardBot(SingleServerIRCBot):
 					print e
 		
 		def load_module(self, module_name):
+			"""
+			Try to (re)load the named module.
+			"""
 			module = __import__(module_name)
 			reload(module)
 			if module_name in self.modules:
