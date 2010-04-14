@@ -3,7 +3,7 @@
 import bot, re, shelve
 
 # Match a user requesting to know how a person speaks
-howDoesUserSound = re.compile("(how|what) does (\w+) (sound|speak|talk)( like)?\??",
+howDoesUserSound = re.compile("(how|what) does ([^\s]+) (sound|speak|talk)( like)?\??",
                               re.IGNORECASE)
 
 # Match a user requesting to know how they speak
@@ -67,6 +67,7 @@ class BeardBotModule(bot.BeardBotModule):
 		Create a new beard for the given user, loading past messages from the log if
 		possible.
 		"""
+		user = user.lower()
 		self.beards[user] = Beard(self.order)
 		if "log" in self.bot.modules:
 			# Pre-train the beard with old conversations
@@ -75,6 +76,7 @@ class BeardBotModule(bot.BeardBotModule):
 				self.beards[user].train(message)
 	
 	def speak_like(self, user):
+		user = user.lower()
 		if user not in self.beards:
 			self.load_beard(user)
 		
@@ -201,12 +203,13 @@ class Beard(object):
 			# If this sentence isn't empty
 			words = sentence.strip().split()
 			if len(words) != 0:
-				# Append an ending word of "." which is used to signal the end of a
+				# Strip out any empty words (e.g. double spaces etc.)
+				words = map((lambda x : x.strip()), words)
+				words = filter((lambda x : x != ""), words)
+				
+				# Append an ending word of False which is used to signal the end of a
 				# chain
 				words.append(False)
-				
-				# Strip out any empty words (e.g. double spaces etc.)
-				words = filter((lambda x : x != ""), words)
 				
 				# Generate a moving grouping of words apropriate for the current order
 				# size. E.g. a b c d becomes ab bc cd for order 2.
@@ -261,3 +264,14 @@ if __name__=="__main__":
 			raw_input()
 	else:
 		print "usage: trainingfile order"
+		
+		# A quick test not to be repeated...
+		#import log
+		#beard = Beard(1)
+		#logger = log.Logger("#rufty")
+		#for datetime, message in logger.get_user_log("splinter98", 0):
+		#	beard.train(message)
+		#
+		#for i in range(10):
+		#	print "'%s'"%(beard.generate(), )
+		

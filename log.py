@@ -1,6 +1,6 @@
 import bot, time, datetime, re
 
-hasUserSaid = re.compile("(has|did) (\w+) (said|say) (.*)",
+hasUserSaid = re.compile("(has|did) ([^\s]+) (said|say) (.*)",
                          re.IGNORECASE)
 
 hasSomeoneSaid = re.compile("(who said|(has|did)( someone| somebody| anyone)?( say)?) (.*)",
@@ -95,6 +95,7 @@ class Logger(object):
 		self.db.create_function("regexp", 2, regexp)
 	
 	def log(self, user, message, addressed=0):
+		user = user.lower()
 		c = self.db.cursor()
 		c.execute("""
 			INSERT INTO ChatLog ( dateTime, user, message, addressed)
@@ -103,6 +104,7 @@ class Logger(object):
 		self.db.commit()
 	
 	def get_user_log(self, user, addressed=None):
+		user = user.lower()
 		c = self.db.cursor()
 		extraSQL = ""
 		query = [user,]
