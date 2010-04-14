@@ -241,7 +241,10 @@ class Beard(object):
 					output.append(word.word[0])
 				word = weightedPick(word.relations)
 			else:
-				output.append(" ".join(word.word))
+				if word.word[-1] != False:
+					output.append(" ".join(word.word))
+				else:
+					output.append(" ".join(word.word[:-2]))
 				break
 		return " ".join(output)
 
