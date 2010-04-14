@@ -147,8 +147,13 @@ class BeardBot(SingleServerIRCBot):
 			# Disconnect and quit
 			SingleServerIRCBot.die(self, *args, **kwargs)
 
+import sys
 def main():
-	bot = BeardBot("#uhc", "irc.quakenet.org")
+	if len(sys.argv) == 2:
+		room = sys.argv[1]
+	else:
+		room = "#uhc"
+	bot = BeardBot(room, "irc.quakenet.org")
 	try:
 		bot.start()
 	except KeyboardInterrupt:
