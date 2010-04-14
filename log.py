@@ -3,7 +3,7 @@ import bot, time, datetime, re
 hasUserSaid = re.compile("(has|did) (\w+) (said|say) (.*)",
                          re.IGNORECASE)
 
-hasSomeoneSaid = re.compile("(has|did|who)( someone| somebody| anyone)?( said| say)? (.*)",
+hasSomeoneSaid = re.compile("(who said|(has|did)( someone| somebody| anyone)?( say)?) (.*)",
                             re.IGNORECASE)
 
 requiredBeardBotVersion = 0.1
@@ -24,7 +24,7 @@ class BeardBotModule(bot.BeardBotModule):
 			query = hasSaidMatch.groups()[3]
 			self.has_user_said(user, query)
 		elif hadMatch:
-			query = hadMatch.groups()[3]
+			query = hadMatch.groups()[-1]
 			self.who_said(query)
 		else:
 			self.logger.log(source_name, message, 1)
