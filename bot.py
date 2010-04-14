@@ -59,11 +59,17 @@ class BeardBot(SingleServerIRCBot):
 		
 		def say(self, message):
 			"""Send a message to the channel"""
-			self.connection.privmsg(self.channel, message)
+			message = message.replace("\001","\\001")
+			message = message.replace("\r","\n")
+			for part in message.split("\n"):
+				self.connection.privmsg(self.channel, part)
 		
 		def pm(self, user, message):
 			"""Send a message to a user"""
-			self.connection.privmsg(user, message)
+			message = message.replace("\r","\n")
+			message = message.replace("\001","\\001")
+			for part in message.split("\n"):
+				self.connection.privmsg(user, part)
 		
 		def on_nicknameinuse(self, c, e):
 			c.nick(c.get_nickname() + "_")

@@ -18,7 +18,10 @@ class BeardBotModule(bot.BeardBotModule):
 				self.scores[source_name] = 2
 			if message.count(":D") > self.scores[source_name]:
 				self.scores[source_name] = message.count(":D")
-				self.bot.say("High score! %i :Ds"%(message.count(":D"), ))
+				if message.count(":D") > 20:
+					self.bot.say("Now you're just pissing me off: %i :Ds"%(message.count(":D"), ))
+				else:
+					self.bot.say("High score! %i :Ds"%(message.count(":D"), ))
 				
 				best = True
 				for person in self.scores:
