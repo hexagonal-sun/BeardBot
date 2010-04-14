@@ -3,6 +3,7 @@ import __builtin__
 
 evalFinder = re.compile("eval\((.+)\)[^\)]*")
 equalFinder = re.compile("(\w*)\s*=\s*(.*)")
+
 allowed_builtins = ['Ellipsis', 'False', 'None', 'True', 'abs', 'all', 'any',
 		    'apply', 'basestring', 'bin', 'bool', 'chr', 'cmp',
 		    'coerce', 'complex', 'delattr', 'dict', 'dir', 'divmod',
@@ -29,15 +30,21 @@ class BeardBotModule(bot.BeardBotModule):
 
 
 	def on_addressed_message(self, source_name, source_host, message):		
-		found = evalFinder.search(message)
-		if found:
-			source = found.group(1)
-			try:
+		eval_found = evalFinder.search(message)
+		equal_found = equalFinder.search(message)
+		try:
+			if eval_found:
+				source = eval_found.group(1)
 				result = self.eval(source)
 				self.locals['_'] = result
 				self.bot.say(repr(result)[:200])
-			except:
-				self.bot.say("I'm afraid I can't let you do that, Dave.")
+			elif equal_found:
+				dest = equal_found.group(1)
+				source = equal_found.group(2)
+				self.locals[dest] = self.eval(source)
+				self.bot.say("%s = %s" % (dest, self.locals[dest]))
+		except Exception, e:
+			self.bot.say("I'm afraid I can't let you do that, Dave.")
 
 	def eval(self, source):
 		return eval(source, self.locals, self.locals)
