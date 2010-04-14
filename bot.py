@@ -149,7 +149,10 @@ class BeardBot(SingleServerIRCBot):
 
 def main():
 	bot = BeardBot("#uhc", "irc.quakenet.org")
-	bot.start()
+	try:
+		bot.start()
+	except KeyboardInterrupt:
+		bot.die()
 
 if __name__ == "__main__":
 	main()
