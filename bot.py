@@ -1,6 +1,7 @@
 __version__ = 0.1
 __author__ = "Jonathan Heathcote"
 
+import pickle
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower
 
@@ -32,6 +33,21 @@ class BeardBot(SingleServerIRCBot):
 			
 			# The loaded modules
 			self.modules = {}
+			
+			# Try to load previously loaded modules
+			try:
+				old_modules = pickle.load(open(self.channel + "_modules.db", "r"))
+				for module in old_modules:
+					try:
+						self.load_module(module)
+					except Exception, e:
+						print e
+			except:
+				# Otherwise just start the admin
+				try:
+					self.load_module("admin")
+				except Exception, e:
+					print e
 		
 		def get_nick(self):
 			"""Get the bot's nickname"""
@@ -121,15 +137,18 @@ class BeardBot(SingleServerIRCBot):
 			del self.modules[module_name]
 		
 		def die(self, *args, **kwargs):
+			# Store a list of loaded modules before going down
+			pickle.dump(self.modules.keys(), open(self.channel + "_modules.db", "w"))
+			
+			# Kill all the modules
 			for module in self.modules.values():
 				module.die()
+			
+			# Disconnect and quit
 			SingleServerIRCBot.die(self, *args, **kwargs)
 
 def main():
 	bot = BeardBot("#uhc", "irc.quakenet.org")
-	bot.load_module("log")
-	bot.load_module("beardy")
-	bot.load_module("admin")
 	bot.start()
 
 if __name__ == "__main__":

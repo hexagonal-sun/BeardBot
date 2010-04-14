@@ -4,7 +4,7 @@ requiredBeardBotVersion = 0.1
 class BeardBotModule(bot.BeardBotModule):
 	def __init__(self, bot):
 		self.bot = bot
-		self.logger = Logger(self.bot.channel.strip("#"))
+		self.logger = Logger(self.bot.channel)
 	
 	def on_channel_message(self, source_name, source_host, message):
 		self.logger.log(source_name, message)
