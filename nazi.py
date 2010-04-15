@@ -2,7 +2,7 @@ import bot, re
 from enchant.checker import SpellChecker
 
 is_a_word = re.compile("(\S+) is a word!?")
-yes_i_do = we.compile("yes i (.*)do", re.IGNORECASE)
+yes_i_do = re.compile("yes i (.*)do", re.IGNORECASE)
 requiredBeardBotVersion = 0.1
 class BeardBotModule(bot.BeardBotModule):
 	def __init__(self, *args, **kwargs):
