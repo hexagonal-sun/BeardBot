@@ -7,7 +7,7 @@ yes_i_do = re.compile("yes i (.*)do", re.IGNORECASE)
 requiredBeardBotVersion = 0.1
 class BeardBotModule(ModuleBase):
 	def __init__(self, *args, **kwargs):
-		bot.BeardBotModule.__init__(self, *args, **kwargs)
+		ModuleBase.__init__(self, *args, **kwargs)
 		self.spell_checker = SpellChecker("en_UK")
 		self.last_word = None
 

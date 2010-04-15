@@ -25,24 +25,24 @@ class ModuleBase(object):
 		Called on every channel message not addressed to the bot.
 		"""
 		self.test_for_matches(on_channel_match, 
-				      source_name, source_host, message)
-                self.on_channel_message(source_name, source_host, message)
+		                      source_name, source_host, message)
+		self.on_channel_message(source_name, source_host, message)
 
 	def handle_addressed_message(self, source_name, source_host, message):
 		"""
 		Called on every channel message addressed to the bot.
 		"""
 		self.test_for_matches(on_addressed_match, 
-				      source_name, source_host, message)
-                self.on_addressed_message(source_name, source_host, message)
+		                      source_name, source_host, message)
+		self.on_addressed_message(source_name, source_host, message)
 
 	def handle_private_message(self, source_name, source_host, message):
 		"""
 		Called on every private message addressed to the bot.
 		"""
 		self.test_for_matches(on_private_match, 
-				      source_name, source_host, message)
-                self.on_private_message(source_name, source_host, message)
+		                      source_name, source_host, message)
+		self.on_private_message(source_name, source_host, message)
 
 
 	def on_channel_message(self, source_name, source_host, message):
@@ -75,7 +75,7 @@ class ModuleBase(object):
 		pass
 
 
-        
+	
 class on_match(object):
 	"""
 	A decorator for module functions, that cause the function 
@@ -115,8 +115,8 @@ class on_match(object):
 			match = self.re.match(message)
 		if match:
 			self.func(parent,
-				  source_name, source_host, message,
-				  *match.groups())
+			          source_name, source_host, message,
+			          *match.groups())
 
 
 

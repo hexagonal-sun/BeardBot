@@ -4,7 +4,7 @@ import shelve, datetime
 requiredBeardBotVersion = 0.1
 class BeardBotModule(ModuleBase):
 	def __init__(self, newBot):
-		bot.BeardBotModule.__init__(self, newBot)
+		ModuleBase.__init__(self, newBot)
 		self.last_highscore = datetime.date.today()
 		self.scores = shelve.open(self.bot.channel + "_highscore.db")
 	
