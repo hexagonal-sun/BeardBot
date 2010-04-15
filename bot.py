@@ -4,16 +4,21 @@ __author__ = "Jonathan Heathcote"
 import pickle
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower
+import re_matcher
+from re_matcher import on_channel_match, on_addressed_match, on_private_match
 
 class BeardBotModule(object):
 	def __init__(self, bot):
 		self.bot = bot
 	def on_channel_message(self, source_name, source_host, message):
-		pass
+		re_matcher.test_for_matches(self, on_channel_match, 
+					    source_name, source_host, message)
 	def on_addressed_message(self, source_name, source_host, message):
-		pass
+		re_matcher.test_for_matches(self, on_addressed_match, 
+					    source_name, source_host, message)
 	def on_private_message(self, source_name, source_host, message):
-		pass
+		re_matcher.test_for_matches(self, on_private_match, 
+					    source_name, source_host, message)
 	def die(self):
 		pass
 
