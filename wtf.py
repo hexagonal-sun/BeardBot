@@ -1,13 +1,14 @@
-import bot, re, string
+from base_module import *
+import re, string
 
 
 word_lists = ["/usr/share/misc/acronyms", "/usr/share/misc/acronyms.comp"]
 
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 
-	@bot.on_channel_match("wtf is (\S*[^\?])\??")
+	@on_channel_match("wtf is (\S*[^\?])\??")
 	def define(self, source_name, source_host, message, word):
 		description = self.translate(word)
 		if description:

@@ -1,10 +1,11 @@
-import bot, re
+from base_module import *
+import re
 from enchant.checker import SpellChecker
 
 is_a_word = re.compile("(\S+) is a word!?")
 yes_i_do = re.compile("yes i (.*)do", re.IGNORECASE)
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def __init__(self, *args, **kwargs):
 		bot.BeardBotModule.__init__(self, *args, **kwargs)
 		self.spell_checker = SpellChecker("en_UK")

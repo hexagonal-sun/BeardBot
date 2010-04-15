@@ -1,7 +1,8 @@
-import bot, shelve, datetime
+from base_module import *
+import shelve, datetime
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def __init__(self, newBot):
 		bot.BeardBotModule.__init__(self, newBot)
 		self.last_highscore = datetime.date.today()

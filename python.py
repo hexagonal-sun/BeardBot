@@ -1,4 +1,5 @@
-import bot, re
+from base_module import *
+import re
 import __builtin__
 import multiprocessing, time
 
@@ -34,7 +35,7 @@ def truncate(msg):
 
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def __init__(self, *args, **kwargs):		
 		bot.BeardBotModule.__init__(self, *args, **kwargs)
 		self.locals = default_locals

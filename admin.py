@@ -1,7 +1,9 @@
-import bot, os
+from base_module import *
+import bot
+import os
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def on_private_message(self, source_name, source_host, message):
 		try:
 			if self.user_is_admin(source_name):

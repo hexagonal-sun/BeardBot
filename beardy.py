@@ -1,6 +1,6 @@
 #!/usr/bin/python
-
-import bot, re, shelve
+from base_module import *
+import re, shelve
 
 # Match a user requesting to know how a person speaks
 howDoesUserSound = re.compile("(how|what) does ([^\s]+) (sound|speak|talk)( like)?\??",
@@ -17,7 +17,7 @@ growBeardNow = re.compile("grow your beard( now)?!?", re.IGNORECASE)
 shaveBeardNow = re.compile("shave (your beard)?( now)?!?", re.IGNORECASE)
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def __init__(self, theBot):
 		bot.BeardBotModule.__init__(self, theBot)
 		self.options = shelve.open(self.bot.channel + "_beardy.db")

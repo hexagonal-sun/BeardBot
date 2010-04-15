@@ -1,10 +1,11 @@
-import bot, re
+from base_module import *
+import re
 
 # Matches a sed-style regex
 regexReplace = re.compile("s/((\\\\\\\\|(\\\\[^\\\\])|[^\\\\/])+)/((\\\\\\\\|(\\\\[^\\\\])|[^\\\\/])*)((/(.*))?)")
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	messages = []
 	def on_channel_message(self, source_name, source_host, message):
 		regex = regexReplace.match(message)

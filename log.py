@@ -1,4 +1,5 @@
-import bot, time, datetime, re
+from base_module import *
+import time, datetime, re
 
 hasUserSaid = re.compile("(has|did) ([^\s]+) (said|say) (.*)",
                          re.IGNORECASE)
@@ -7,7 +8,7 @@ hasSomeoneSaid = re.compile("(who said|(has|did)( someone| somebody| anyone)?( s
                             re.IGNORECASE)
 
 requiredBeardBotVersion = 0.1
-class BeardBotModule(bot.BeardBotModule):
+class BeardBotModule(ModuleBase):
 	def __init__(self, bot):
 		self.bot = bot
 		self.logger = Logger(self.bot.channel)
