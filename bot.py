@@ -64,7 +64,6 @@ class BeardBot(SingleServerIRCBot):
 		
 		def say(self, message):
 			"""Send a message to the channel"""
-			message = message.replace("\001","\\001")
 			message = message.replace("\r","\n")
 			for part in message.split("\n"):
 				self.connection.privmsg(self.channel, part)
@@ -72,7 +71,6 @@ class BeardBot(SingleServerIRCBot):
 		def pm(self, user, message):
 			"""Send a message to a user"""
 			message = message.replace("\r","\n")
-			message = message.replace("\001","\\001")
 			for part in message.split("\n"):
 				self.connection.privmsg(user, part)
 		
