@@ -2,8 +2,10 @@ import bot, re
 import __builtin__
 import multiprocessing, time
 
+
 evalFinder = re.compile("eval\((.+)\)[^\)]*")
 equalFinder = re.compile("(\w*)\s*=\s*(.*)")
+
 
 allowed_builtins = ['Ellipsis', 'False', 'None', 'True', 'abs', 'all', 'any',
 		    'apply', 'basestring', 'bin', 'bool', 'chr', 'cmp',
@@ -16,16 +18,20 @@ allowed_builtins = ['Ellipsis', 'False', 'None', 'True', 'abs', 'all', 'any',
 		    'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum',
 		    'tuple', 'type', 'unichr', 'unicode', 'xrange', 'zip']
 
+
 default_locals = dict((k, v) 
 		      for k, v 
 		      in vars(__builtin__).iteritems() 
 		      if k in allowed_builtins)
 
+
 default_locals["__builtins__"] = None
 default_locals["sleep"] = time.sleep
 
+
 def truncate(msg):
 	return msg if len(msg) < 200 else msg[:200] + "..."
+
 
 requiredBeardBotVersion = 0.1
 class BeardBotModule(bot.BeardBotModule):
@@ -52,8 +58,10 @@ class BeardBotModule(bot.BeardBotModule):
 			self.bot.say("I'm afraid I can't let you do that, Dave.")
 			print dir(e)
 
+
 	def eval(self, source):
 		return eval(source, self.locals, self.locals)
+
 
 	def eval_timed(self, source):
 		def target(self, source, conn, done):
@@ -61,13 +69,13 @@ class BeardBotModule(bot.BeardBotModule):
 			conn.close()
 			done.set()
 			
-
 		parent_conn, child_conn = multiprocessing.Pipe()
 		done = multiprocessing.Event()
 		p = multiprocessing.Process(target=target, args=(self, source, child_conn, done))
 		p.start()
 		done.wait(0.5)
 		p.terminate()
+
 		if done.is_set():
 			return parent_conn.recv()
 		else:
