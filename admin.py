@@ -1,6 +1,9 @@
 from base_module import *
 import bot
 import os
+import re
+
+valid_module_name = re.compile("^\w+\.py$")
 
 requiredBeardBotVersion = 0.1
 class BeardBotModule(ModuleBase):
@@ -39,19 +42,20 @@ class BeardBotModule(ModuleBase):
 					self.bot.pm(user, "How am I supposed to unload something that isn't loaded?")
 	
 	def list_modules(self, user):
-		self.bot.pm(user, "Available modules:")
+		mod_names = []
 		for filename in os.listdir(os.getcwd()):
-			if filename.endswith(".py"):
+			if valid_module_name.match(filename):
 				module_name = filename.partition(".")[0]
 				try:
 					module = __import__(module_name)
 					if module.requiredBeardBotVersion <= bot.__version__:
-						postfix = ""
-						if module_name in self.bot.modules:
-							postfix = " (loaded)"
-						self.bot.pm(user, module_name + postfix)
+						mod_names.append(module_name)
 				except AttributeError:
 					pass
+		self.bot.pm(user, "Available modules: %s" % 
+		            ', '.join(sorted(set(mod_names) - set(self.bot.modules))))
+		self.bot.pm(user, "Loaded modules: %s" % 
+		            ', '.join(sorted(self.bot.modules)))
 	
 	def user_is_admin(self, user):
 		return True # Todo...
