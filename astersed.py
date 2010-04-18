@@ -12,14 +12,14 @@ class BeardBotModule(ModuleBase):
 	
 	@on_channel_match("\*([^\s]+)")
 	def on_aster_change(self, source_name, source_host, message, change):
-			last_message = self.messages[source_name].split()
-			likely_changes = difflib.get_close_matches(change, last_message, 5, 0.5)
+		last_message = self.messages[source_name].split()
+		likely_changes = difflib.get_close_matches(change, last_message, 5, 0.5)
+		
+		# Don't match an exact version of the word
+		likely_changes = filter((lambda x: x != change), likely_changes)
+		
+		if len(likely_changes) != 0:
+			target = likely_changes[0]
 			
-			# Don't match an exact version of the word
-			likely_changes = filter((lambda x: x != change), likely_changes)
-			
-			if len(likely_changes) != 0:
-				target = likely_changes[0]
-				
-				# Dirty hack -- please sanitise
-				self.bot.say(" ".join([change if x == target else x for x in last_message]))
+			# Dirty hack -- please sanitise
+			self.bot.say(" ".join([change if x == target else x for x in last_message]))
