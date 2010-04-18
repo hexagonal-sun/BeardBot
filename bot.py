@@ -19,6 +19,9 @@ class BeardBot(SingleServerIRCBot):
 			# The channel the bot is a member of
 			self.channel = channel
 			
+			# The last place a message was recieved from (used by "reply")
+			self.last_message_sender = self.channel
+			
 			# The loaded modules
 			self.modules = {}
 			
@@ -47,9 +50,11 @@ class BeardBot(SingleServerIRCBot):
 		
 		def say(self, message):
 			"""Send a message to the channel"""
-			message = message.replace("\r","\n")
-			for part in message.split("\n"):
-				self.connection.privmsg(self.channel, part)
+			self.pm(self.channel, message)
+		
+		def reply(self, message):
+			"""Send a message to the last person to speak"""
+			self.pm(self.last_message_sender, message)
 		
 		def pm(self, user, message):
 			"""Send a message to a user"""
@@ -63,11 +68,13 @@ class BeardBot(SingleServerIRCBot):
 		def on_welcome(self, c, e):
 			c.join(self.channel)
 			#c.privmsg(self.channel, "Hi there, I'm beardy. If I'm annoying, tell me to die.")
+		
 		def on_privmsg(self, c, e):
 			# Handle a message recieved from the channel
 			source_name = nm_to_n(e.source()).lower()
 			source_host = nm_to_h(e.source())
 			message = e.arguments()[0]
+			self.last_message_sender = source_name
 			
 			for module in self.modules.values():
 				try:
@@ -90,6 +97,7 @@ class BeardBot(SingleServerIRCBot):
 			source_name = nm_to_n(e.source()).lower()
 			source_host = nm_to_h(e.source())
 			message = e.arguments()[0]
+			self.last_message_sender = self.channel
 			
 			# If a message was addressed specifically to the bot, note this and strip
 			# this from the message
