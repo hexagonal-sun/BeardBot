@@ -9,6 +9,7 @@ class BeardBotModule(ModuleBase):
 	def __init__(self, *args, **kwargs):
 		ModuleBase.__init__(self, *args, **kwargs)
 		self.messages = shelve.open(self.bot.channel + "_astersed.db")
+		print __name__
 	
 	def on_channel_message(self, source_name, source_host, message):
 		regex = regexAster.match(message)

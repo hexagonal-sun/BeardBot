@@ -43,6 +43,7 @@ class BeardBotModule(ModuleBase):
 	
 	def list_modules(self, user):
 		mod_names = []
+		unloadable_mod_names = []
 		for filename in os.listdir(os.getcwd()):
 			if valid_module_name.match(filename):
 				module_name = filename.partition(".")[0]
@@ -52,10 +53,15 @@ class BeardBotModule(ModuleBase):
 						mod_names.append(module_name)
 				except AttributeError:
 					pass
+				except Exception, e:
+					print "Can't load", module_name, e
+					unloadable_mod_names.append(module_name)
 		self.bot.pm(user, "Available modules: %s" % 
 		            ', '.join(sorted(set(mod_names) - set(self.bot.modules))))
 		self.bot.pm(user, "Loaded modules: %s" % 
 		            ', '.join(sorted(self.bot.modules)))
+		self.bot.pm(user, "Un-loadable modules: %s" % 
+		            ', '.join(sorted(unloadable_mod_names)))
 	
 	def user_is_admin(self, user):
 		return True # Todo...
