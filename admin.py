@@ -55,13 +55,13 @@ class BeardBotModule(ModuleBase):
 					pass
 				except Exception, e:
 					print "Can't load", module_name, e
-					unloadable_mod_names.append(module_name)
+					unloadable_mod_names.append((module_name, str(e)))
 		self.bot.pm(user, "Available modules: %s" % 
 		            ', '.join(sorted(set(mod_names) - set(self.bot.modules))))
 		self.bot.pm(user, "Loaded modules: %s" % 
 		            ', '.join(sorted(self.bot.modules)))
 		self.bot.pm(user, "Un-loadable modules: %s" % 
-		            ', '.join(sorted(unloadable_mod_names)))
+		            ', '.join(("%s (%s)"%x for x in unloadable_mod_names)))
 	
 	def user_is_admin(self, user):
 		return True # Todo...
