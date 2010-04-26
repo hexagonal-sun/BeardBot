@@ -10,7 +10,7 @@ class BeardBotModule(ModuleBase):
 	def on_channel_message(self, source_name, source_host, message):
 		self.messages[source_name] = message
 	
-	@on_channel_match("\*([^\s*]+)")
+	@on_channel_match("^\*([^\s*]+)$")
 	def on_aster_change(self, source_name, source_host, message, change):
 		last_message = self.messages[source_name].split(' ')
 		likely_changes = difflib.get_close_matches(change, last_message, 5, 0.5)
