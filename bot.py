@@ -149,11 +149,18 @@ class BeardBot(SingleServerIRCBot):
 
 import sys
 def main():
-	if len(sys.argv) == 2:
-		room = sys.argv[1]
+	if len(sys.argv) >= 2:
+		server = sys.argv[1]
+	else:
+		server = "irc.quakenet.org"
+	
+	if len(sys.argv) >= 3:
+		room = sys.argv[2]
 	else:
 		room = "#uhc"
-	bot = BeardBot(room, "irc.quakenet.org")
+	
+	bot = BeardBot(room, server)
+	
 	try:
 		bot.start()
 	except KeyboardInterrupt:
