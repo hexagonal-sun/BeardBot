@@ -247,7 +247,7 @@ class Beard(object):
 				if word.word[-1] != False:
 					output.append(" ".join(word.word))
 				else:
-					output.append(" ".join(word.word[:-2]))
+					output.append(" ".join(word.word[:-1]))
 				break
 		return " ".join(output)
 
