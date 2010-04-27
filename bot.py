@@ -62,7 +62,7 @@ class BeardBot(SingleServerIRCBot):
 			"""Send a message to a user"""
 			message = message.replace("\r","\n")
 			for part in message.split("\n"):
-				self.connection.privmsg(user, part)
+				self.connection.privmsg(user, part.encode("UTF8"))
 		
 		def on_nicknameinuse(self, c, e):
 			c.nick(c.get_nickname() + "_")
@@ -75,7 +75,7 @@ class BeardBot(SingleServerIRCBot):
 			# Handle a message recieved from the channel
 			source_name = nm_to_n(e.source()).lower()
 			source_host = nm_to_h(e.source())
-			message = e.arguments()[0]
+			message = e.arguments()[0].decode("UTF8")
 			self.last_message_sender = source_name
 			
 			for module in self.modules.values():
@@ -111,9 +111,9 @@ class BeardBot(SingleServerIRCBot):
 			for module in self.modules.values():
 				try:
 					if addressed_to_BeardBot:
-						module.handle_addressed_message(source_name, source_host, message)
+						module.handle_addressed_message(source_name, source_host, message.decode("UTF8"))
 					else:
-						module.handle_channel_message(source_name, source_host, message)
+						module.handle_channel_message(source_name, source_host, message.decode("UTF8"))
 				except Exception, e:
 					traceback.print_exc(file=sys.stdout)
 		
