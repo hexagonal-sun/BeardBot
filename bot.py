@@ -103,7 +103,7 @@ class BeardBot(SingleServerIRCBot):
 			
 			# If a message was addressed specifically to the bot, note this and strip
 			# this from the message
-			addressed_to_BeardBot = irc_lower(message).startswith("%s: "%(self.nick,))
+			addressed_to_BeardBot = irc_lower(message).startswith("%s: " % self.nick.lower())
 			if addressed_to_BeardBot:
 				message = message.split(": ", 1)[-1]
 			
