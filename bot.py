@@ -1,6 +1,8 @@
 __version__ = 0.1
 __author__ = "Jonathan Heathcote"
 
+import sys
+import traceback
 import pickle
 from ircbot import SingleServerIRCBot
 from irclib import nm_to_n, nm_to_h, irc_lower
@@ -32,7 +34,7 @@ class BeardBot(SingleServerIRCBot):
 					try:
 						self.load_module(module)
 					except Exception, e:
-						print e
+						traceback.print_exc(file=sys.stdout)
 			except:
 				# Otherwise just start the admin
 				try:
@@ -80,7 +82,7 @@ class BeardBot(SingleServerIRCBot):
 				try:
 					module.handle_private_message(source_name, source_host, message)
 				except Exception, e:
-					print e
+					traceback.print_exc(file=sys.stdout)
 			
 			if message == "die":
 				# Force the bot to die
@@ -113,7 +115,7 @@ class BeardBot(SingleServerIRCBot):
 					else:
 						module.handle_channel_message(source_name, source_host, message)
 				except Exception, e:
-					print e
+					traceback.print_exc(file=sys.stdout)
 		
 		def load_module(self, module_name):
 			"""
