@@ -12,9 +12,9 @@ class IncompatibleModuleError(Exception):
 	pass
 
 class BeardBot(SingleServerIRCBot):
-		def __init__(self, channel, server, port=6667):
+		def __init__(self, channel, server, port=6667, name="beardbot"):
 			SingleServerIRCBot.__init__(self, [(server, port)],
-			                            "beardbot",
+			                            name,
 			                            "The Beardy-Based Botulator")
 			# The channel the bot is a member of
 			self.channel = channel
@@ -159,7 +159,12 @@ def main():
 	else:
 		room = "#uhc"
 	
-	bot = BeardBot(room, server)
+	if len(sys.argv) >= 4:
+		name = sys.argv[3]
+	else:
+		name = "beardbot"
+	
+	bot = BeardBot(room, server, name=name)
 	
 	try:
 		bot.start()
