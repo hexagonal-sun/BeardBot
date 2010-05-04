@@ -20,13 +20,13 @@ class BeardBotModule(ModuleBase):
 		hasSaidMatch = hasUserSaid.match(message)
 		hadMatch = hasSomeoneSaid.match(message)
 		
-		if hadMatch:
-			query = hadMatch.groups()[-1]
-			self.who_said(query)
-		elif hasSaidMatch:
+		if hasSaidMatch:
 			user = hasSaidMatch.groups()[1]
 			query = hasSaidMatch.groups()[3]
 			self.has_user_said(user, query)
+		elif hadMatch:
+			query = hadMatch.groups()[-1]
+			self.who_said(query)
 		else:
 			self.logger.log(source_name, message, 1)
 	
