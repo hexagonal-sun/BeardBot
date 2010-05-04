@@ -63,7 +63,7 @@ class BeardBotModule(ModuleBase):
 			how_often = self.logger.how_often_does_user_say(user, query)
 			if how_often > 1:
 				self.bot.say("Infact %s says it quite a bit: %i times today!"%(user, how_often))
-		except TypeError:
+		except TypeError,e:
 			self.bot.say("Nope.")
 	
 	def die(self):
@@ -90,8 +90,11 @@ class Logger(object):
 		self.db.commit()
 		
 		def regexp(search, string):
-			if re.match(search, string, re.IGNORECASE):
-				return 1
+			try:
+				if re.match(search.encode("UTF8"), string.encode("UTF8"), re.IGNORECASE):
+					return 1
+			except Exception, e:
+				return 0
 		
 		self.db.create_function("regexp", 2, regexp)
 	
