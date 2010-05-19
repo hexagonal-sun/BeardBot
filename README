@@ -99,6 +99,12 @@ The following modules are shipped with BeardBot (hopefully) ready for use.
     where the second wtf is your chosen acronym and the module will try to
     answer your question. This does require you have an acronym file installed
     on your system which appear to be somewhat uncommon.
+  whatthehellguys
+    Keeps a record of the tone of conversation based on keywords it sees. If the
+    tone of the conversation drops by 50% in one message it will announce the
+    tone of conversation.
+      beardbot: what the hell
+        Reports the current tone of conversation
   xkcdhighscore
     Keeps track of the number of times users post xkcd links. Will print out a
     leaderboard on request:
