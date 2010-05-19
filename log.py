@@ -30,6 +30,11 @@ class BeardBotModule(ModuleBase):
 		else:
 			self.logger.log(source_name, message, 1)
 	
+	@on_private_match("what's the latest|chat history|recent messages", re.I)
+	def on_latest_request(self, source_name, source_host, message):
+		for user, message in self.logger.get_recent_messages():
+			self.bot.pm(source_name, "%s: %s"%(user, message))
+	
 	def who_said(self, query):
 		"""
 		Find out who said the given string last and when
@@ -106,6 +111,15 @@ class Logger(object):
 			VALUES ( ?, ?, ? , ?)
 		""", (time.time(), user, message, addressed))
 		self.db.commit()
+	
+	def get_recent_messages(self, num=5):
+		c = self.db.cursor()
+		c.execute("""
+			SELECT user, message FROM ChatLog ORDER BY dateTime DESC
+			LIMIT ? """, [num,])
+		for row in c:
+			yield row
+		return
 	
 	def get_user_log(self, user, addressed=None):
 		user = user.lower()
