@@ -79,6 +79,8 @@ The following modules are shipped with BeardBot (hopefully) ready for use.
         the expression unless you start the regex with a /
       who said regex.*search
         As above but not limited to a particular user.
+      [in a pm] recent messages
+        Prints out the most recently said things on the channel.
   nazi
     A spelling-nazi function. It will shout at users who misspell words. Note of
     warning, this module is bloody annoying. If the spellcheck doesn't know a
@@ -97,6 +99,12 @@ The following modules are shipped with BeardBot (hopefully) ready for use.
     where the second wtf is your chosen acronym and the module will try to
     answer your question. This does require you have an acronym file installed
     on your system which appear to be somewhat uncommon.
+  xkcdhighscore
+    Keeps track of the number of times users post xkcd links. Will print out a
+    leaderboard on request:
+      beardbot: xkcd leader board
+        Prints out the leaderboard of the number of times users have used xkcd
+        refrences and provided links.
 
 --------------------------------------------------------------------------------
 
