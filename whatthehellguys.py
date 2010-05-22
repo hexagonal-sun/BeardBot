@@ -84,6 +84,8 @@
 
 from base_module import *
 import shelve, time, re
+import threading
+import urllib2
 
 RECOVERY_RATE_PER_SECOND = 0.05 / 60
 RECOVERY_RATE_PER_MESSAGE = 1 / 30
@@ -120,7 +122,10 @@ class BeardBotModule(ModuleBase):
 		self.shelf = shelve.open(self.bot.channel + "_whatthehellguys.db")
 		if "last_message" not in self.shelf:
 			self.shelf["last_message"] = time.time()
-	
+
+		self.graph = GraphUpdaterThread(self.bot.channel)
+		self.graph.start()
+
 	def get_level(self):
 		if "level" not in self.shelf:
 			self.shelf["level"] = 1
@@ -138,6 +143,8 @@ class BeardBotModule(ModuleBase):
 			time_since_last_message = time.time() - self.shelf["last_message"]
 			self.level += time_since_last_message * RECOVERY_RATE_PER_SECOND
 			self.level += RECOVERY_RATE_PER_MESSAGE
+
+		self.graph.update(self.level * 100)
 		
 		self.shelf["last_message"] = time.time()
 	
@@ -167,3 +174,68 @@ class BeardBotModule(ModuleBase):
 			self.bot.say("The geneva conventions kick in at this point: Conversational tone at 0%")
 	def die(self):
 		self.shelf.close()
+		self.graph.stop()
+
+
+
+class GraphUpdaterThread(threading.Thread):
+
+	update_url = "http://tnutils.appspot.com/graphs/wthg_%s/set"
+	
+	def __init__(self, channel):
+		threading.Thread.__init__(self)
+
+		# The 'set' url
+		self.url = self.update_url % channel.lstrip('#')
+		self.title = channel
+
+		self.condition = threading.Condition()
+		self.new_value = False
+		self.value = None
+		self.running = True
+		self._notify = False
+
+
+	def stop(self):
+		with self.condition:
+			self.running = False
+			self.notify()
+
+		self.join()
+
+
+	def update(self, value):
+		with self.condition:
+			self.new_value = True
+			self.value = value
+			self.notify()
+
+
+	def notify(self):
+		self._notify = True
+		self.condition.notify()
+
+
+	def run_update(self, value):
+		urllib2.urlopen(self.url, "value=%i" % value)
+
+
+	def run(self):
+		# set the graph title
+		urllib2.urlopen(self.url, "title=%s" % self.title)
+
+		while self.running:
+			# Update if there's a new value.
+			with self.condition:
+				new_value = self.new_value
+				value = self.value
+			if new_value:
+				self.run_update(value)
+
+			# Repeat if there's a new value, otherwise wait.
+			with self.condition:
+				if self._notify:
+					continue
+				else:
+					self.condition.wait()
+				
