@@ -218,6 +218,8 @@ class GraphUpdaterThread(threading.Thread):
 
 	def run_update(self, value):
 		urllib2.urlopen(self.url, "value=%i" % value)
+		with self.condition:
+			self.new_value = False
 
 
 	def run(self):
@@ -235,6 +237,7 @@ class GraphUpdaterThread(threading.Thread):
 			# Repeat if there's a new value, otherwise wait.
 			with self.condition:
 				if self._notify:
+					self._notify = False
 					continue
 				else:
 					self.condition.wait()
