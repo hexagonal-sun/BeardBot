@@ -105,6 +105,10 @@ The following modules are shipped with BeardBot (hopefully) ready for use.
     tone of conversation.
       beardbot: what the hell
         Reports the current tone of conversation
+      beardbot: don't judge me
+        Disable automatic feedback on large drops (default)
+      beardbot: tell me if this goes too far
+        Enable automatic feedback on large drops
   xkcdhighscore
     Keeps track of the number of times users post xkcd links. Will print out a
     leaderboard on request:

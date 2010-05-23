@@ -122,10 +122,10 @@ class BeardBotModule(ModuleBase):
 		self.shelf = shelve.open(self.bot.channel + "_whatthehellguys.db")
 		if "last_message" not in self.shelf:
 			self.shelf["last_message"] = time.time()
-
+		
 		self.graph = GraphUpdaterThread(self.bot.channel)
 		self.graph.start()
-
+		
 	def get_level(self):
 		if "level" not in self.shelf:
 			self.shelf["level"] = 1
@@ -133,17 +133,25 @@ class BeardBotModule(ModuleBase):
 	def set_level(self, new_level):
 		self.shelf["level"] = new_level if new_level <= 1 else 1
 	level = property(fget=get_level, fset=set_level)
+		
+	def get_auto_comment(self):
+		if "auto_comment" not in self.shelf:
+			self.shelf["auto_comment"] = False
+		return self.shelf["auto_comment"]
+	def set_auto_comment(self, new_auto_comment):
+		self.shelf["auto_comment"] = new_auto_comment
+	auto_comment = property(fget=get_auto_comment, fset=set_auto_comment)
 	
 	def on_channel_message(self, source_name, source_host, message):
 		old_level = self.level
 		if self.innapropriate(message):
-			if self.level <= old_level*0.5:
+			if self.level <= old_level*0.5 and self.auto_comment:
 				self.on_level_request(self, source_name, source_host, message)
 		else:
 			time_since_last_message = time.time() - self.shelf["last_message"]
 			self.level += time_since_last_message * RECOVERY_RATE_PER_SECOND
 			self.level += RECOVERY_RATE_PER_MESSAGE
-
+		
 		self.graph.update(self.level * 100)
 		
 		self.shelf["last_message"] = time.time()
@@ -157,6 +165,17 @@ class BeardBotModule(ModuleBase):
 				is_innapropriate = True
 		
 		return is_innapropriate
+	
+	@on_addressed_match("don'?t judge me!?", re.I)
+	def on_stfu(self, source_name, source_host, message):
+		self.bot.say("Sorry! I'll shut up.")
+		self.auto_comment = False
+	
+	#           Sorry but you have to take these people into account |
+	@on_addressed_match("tell (?:me|us) if (?:this|we) (?:gets (?:too? )bad|goes too? far)", re.I)
+	def on_tell_me_if_this_gets_bad(self, source_name, source_host, message):
+		self.bot.say("I'll do what I can.")
+		self.auto_comment = True
 	
 	@on_addressed_match("what the hell(?: guys)?.*", re.I)
 	def on_level_request(self, source_name, source_host, message):
@@ -179,53 +198,53 @@ class BeardBotModule(ModuleBase):
 
 
 class GraphUpdaterThread(threading.Thread):
-
+	
 	update_url = "http://tnutils.appspot.com/graphs/wthg_%s/set"
 	
 	def __init__(self, channel):
 		threading.Thread.__init__(self)
-
+		
 		# The 'set' url
 		self.url = self.update_url % channel.lstrip('#')
 		self.title = channel
-
+		
 		self.condition = threading.Condition()
 		self.new_value = False
 		self.value = None
 		self.running = True
 		self._notify = False
-
-
+		
+		
 	def stop(self):
 		with self.condition:
 			self.running = False
 			self.notify()
-
+		
 		self.join()
-
-
+		
+		
 	def update(self, value):
 		with self.condition:
 			self.new_value = True
 			self.value = value
 			self.notify()
-
-
+		
+		
 	def notify(self):
 		self._notify = True
 		self.condition.notify()
-
-
+		
+		
 	def run_update(self, value):
 		urllib2.urlopen(self.url, "value=%i" % value)
 		with self.condition:
 			self.new_value = False
-
-
+		
+		
 	def run(self):
 		# set the graph title
 		urllib2.urlopen(self.url, "title=%s" % self.title)
-
+		
 		while self.running:
 			# Update if there's a new value.
 			with self.condition:
@@ -233,7 +252,7 @@ class GraphUpdaterThread(threading.Thread):
 				value = self.value
 			if new_value:
 				self.run_update(value)
-
+		
 			# Repeat if there's a new value, otherwise wait.
 			with self.condition:
 				if self._notify:
@@ -241,4 +260,3 @@ class GraphUpdaterThread(threading.Thread):
 					continue
 				else:
 					self.condition.wait()
-				
