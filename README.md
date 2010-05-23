@@ -1,5 +1,5 @@
-BeardBot
-========
+![BeardBot Logo](http://github.com/mossblaser/BeardBot/raw/master/logo.png "BeardBot")
+
 A modular Python IRC bot with an assortment of amusing and useful functions.
 Currently at a rather early stage in development.
 
