@@ -162,7 +162,7 @@ def main():
 	(options, args) = parser.parse_args()
 
 	#prepend a '#' to the room if there isn't one.
-	room = ("" if options.room.startswith('#') else "#") + options.room
+	room = options.room if options.room.startswith('#') else ("#" + options.room)
 	server = options.server
 	name = options.name
 
