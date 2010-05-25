@@ -1,5 +1,5 @@
 import re
-
+from types import FunctionType
 
 class ModuleBase(object):
 	"""
@@ -16,8 +16,8 @@ class ModuleBase(object):
 		Call 'call_if_match'on each attribute of type 'match type'.
 		"""
 		for attribute in (getattr(self, attr_name) for attr_name in dir(self)):
-			if isinstance(attribute, match_type):
-				attribute.call_if_match(self, source_name, source_host, message)
+			if isinstance(attribute, on_match):
+				attribute.call_if_match(self, source_name, source_host, message, match_type)
 
 
 	def handle_channel_message(self, source_name, source_host, message):
@@ -80,7 +80,12 @@ class on_match(object):
 	"""
 	A decorator for module functions, that cause the function 
 	to be called when the passed regular expression matches a message.
+
 	This should not be used directly - use one of on_*_match defined below.
+
+	If this is used to decorate an already decorated function, 
+	the function is executed only once if any expressions match.
+	(evaluated from top-to-bottom)
 	"""
 	def __init__(self, expression, flags=0, search=False):
 		"""
@@ -88,35 +93,50 @@ class on_match(object):
 		flags      - The flags to be passed to the re matcher.
 		search     - If True, use re.search to match, otherwise re.match
 		"""
-		self.re = re.compile(expression, flags)
-		self.search = search
-		
+		regex = re.compile(expression, flags)
+
+		self.patterns = [(type(self), regex, search)]
+
 		
 	def __call__(self, *args, **kwargs):
 		# The first time this is called, store the function to be decorated 
 		if not hasattr(self, "func"):
-			self.func = args[0]
+			func = args[0]
+			# If it's an 'on_match', add its patterns to our own,
+			# and use its functon, otherwise, assume it is a function
+			# to be called on a match occuring.
+			if isinstance(func, on_match):
+				self.patterns += func.patterns
+				self.func = func.func
+			else:
+				self.func = func
 			return self
 		# Next time, call the function to make it look like the original function.
 		else:
 			return self.func(*args, **kwargs)
 
 
-	def call_if_match(self, parent, source_name, source_host, message):
+	def call_if_match(self, parent, source_name, source_host, message, message_type):
 		"""
-		Call the enclosed function if the re matches message.
+		Call the enclosed function if a re matches message and message_type.
 		'parent' is the object that it should be called from (ie, the module)
 		The enclosed function is called with the groups from the 
 		regular expression argument appended to the argument list.
 		"""
-		if self.search: 
-			match = self.re.search(message)
-		else:
-			match = self.re.match(message)
-		if match:
-			self.func(parent,
-			          source_name, source_host, message,
-			          *match.groups())
+		for match_type, regex, search in self.patterns:
+			# Only test if it's the correct message type.
+			if match_type == message_type:
+				# search/match the message.
+				if search: 
+					match = regex.search(message)
+				else:
+					match = regex.match(message)
+				# If it matches, call func and exit.
+				if match:
+					self.func(parent,
+						  source_name, source_host, message,
+						  *match.groups())
+					break
 
 
 
