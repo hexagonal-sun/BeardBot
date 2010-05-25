@@ -89,7 +89,7 @@ class on_match(object):
 		search     - If True, use re.search to match, otherwise re.match
 		"""
 		self.re = re.compile(expression, flags)
-		self.search = False
+		self.search = search
 		
 		
 	def __call__(self, *args, **kwargs):
