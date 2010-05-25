@@ -146,7 +146,7 @@ class BeardBotModule(ModuleBase):
 		old_level = self.level
 		if self.innapropriate(message):
 			if self.level <= old_level*0.5 and self.auto_comment:
-				self.on_level_request(self, source_name, source_host, message)
+				self.on_level_request(source_name, source_host, message)
 		else:
 			time_since_last_message = time.time() - self.shelf["last_message"]
 			self.level += time_since_last_message * RECOVERY_RATE_PER_SECOND

@@ -1,5 +1,5 @@
 import re
-from types import FunctionType
+from types import MethodType
 
 class ModuleBase(object):
 	"""
@@ -15,7 +15,7 @@ class ModuleBase(object):
 		"""
 		Call 'call_if_match'on each attribute of type 'match type'.
 		"""
-		for attribute in (getattr(self, attr_name) for attr_name in dir(self)):
+		for attribute in self.__class__.__dict__.itervalues():
 			if isinstance(attribute, on_match):
 				attribute.call_if_match(self, source_name, source_host, message, match_type)
 
@@ -112,8 +112,14 @@ class on_match(object):
 				self.func = func
 			return self
 		# Next time, call the function to make it look like the original function.
+		# This probably won't be called unless you're doing something *really* odd,
+		# but it could be usefull
 		else:
 			return self.func(*args, **kwargs)
+
+	def __get__(self, obj, obj_type=None):
+		# If this is accessed from an object, pretend to be a method.
+		return MethodType(self, obj, obj_type)
 
 
 	def call_if_match(self, parent, source_name, source_host, message, message_type):
