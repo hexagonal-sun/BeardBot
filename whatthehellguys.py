@@ -97,15 +97,14 @@ rules = {
 	".*(?:fap|jizz|shag|dogging|masturbate|anal|oral|bdsm|fisting).*" : 0.7,
 	".*(?:fuck|cunt).*" : 0.8,
 	".*(?:shit|wanker|dick|penis|cock|tits|fun bags).*" : 0.9,
-	".*mujs.*" : 0.8,
 	".*condom.*" : 0.9,
 	".*tentacle porn.*" : 0.3,
 	".*pi[cx]s ?pls.*" : 0.5,
-	".*(?:goatse|tub girl|2g1c|two girls one cup).*" : 0.5,
+	".*(?:goatse|tub girl|2g1c|two girls one cup|loli|yaoi|yuri).*" : 0.5,
 	".*4chan.*" : 0.3,
+	".*(?:racism|racist).*" : 0.9,
 	".*rule ?34.*" : 0.3,
 	".*/b/.*" : 0.2,
-	".*moochan.*" : 0.3,
 	".*disectchan.*" : 0.1,
 	".*James Sandford.*" : 0.1,
 	".*(?:necrophilia|bestiality).*" : 0.5,
@@ -146,7 +145,7 @@ class BeardBotModule(ModuleBase):
 		old_level = self.level
 		if self.innapropriate(message):
 			if self.level <= old_level*0.5 and self.auto_comment:
-				self.on_level_request(source_name, source_host, message)
+				self.on_level_request(self, source_name, source_host, message)
 		else:
 			time_since_last_message = time.time() - self.shelf["last_message"]
 			self.level += time_since_last_message * RECOVERY_RATE_PER_SECOND
