@@ -235,14 +235,20 @@ class GraphUpdaterThread(threading.Thread):
 		
 		
 	def run_update(self, value):
-		urllib2.urlopen(self.url, "value=%i" % value)
-		with self.condition:
-			self.new_value = False
+		try:
+			urllib2.urlopen(self.url, "value=%i" % value)
+			with self.condition:
+				self.new_value = False
+		except:
+			pass
 		
 		
 	def run(self):
 		# set the graph title
-		urllib2.urlopen(self.url, "title=%s" % self.title)
+		try:
+			urllib2.urlopen(self.url, "title=%s" % self.title)
+		except:
+			pass
 		
 		while self.running:
 			# Update if there's a new value.
