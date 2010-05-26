@@ -103,7 +103,7 @@ rules = {
 	".*(?:goatse|tub girl|2g1c|two girls one cup|loli|yaoi|yuri).*" : 0.5,
 	".*4chan.*" : 0.3,
 	".*(?:racism|racist).*" : 0.9,
-	".*rule ?34.*" : 0.3,
+	".*rule ?3(?:4|5).*" : 0.3,
 	".*/b/.*" : 0.2,
 	".*disectchan.*" : 0.1,
 	".*James Sandford.*" : 0.1,
