@@ -145,7 +145,7 @@ class BeardBotModule(ModuleBase):
 		old_level = self.level
 		if self.innapropriate(message):
 			if self.level <= old_level*0.5 and self.auto_comment:
-				self.on_level_request(self, source_name, source_host, message)
+				self.on_level_request(source_name, source_host, message)
 		else:
 			time_since_last_message = time.time() - self.shelf["last_message"]
 			self.level += time_since_last_message * RECOVERY_RATE_PER_SECOND
@@ -172,7 +172,7 @@ class BeardBotModule(ModuleBase):
 	
 	#           Sorry but you have to take these people into account |
 	@on_addressed_match("tell (?:me|us) if (?:this|we) (?:gets (?:too? )bad|goes too? far)", re.I)
-	def on_tell_me_if_this_gets_bad(source_name, source_host, message):
+	def on_tell_me_if_this_gets_bad(self, source_name, source_host, message):
 		self.bot.say("I'll do what I can.")
 		self.auto_comment = True
 	
