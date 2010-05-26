@@ -106,10 +106,11 @@ rules = {
 	".*rule ?3(?:4|5).*" : 0.3,
 	".*/b/.*" : 0.2,
 	".*disectchan.*" : 0.1,
+        ".*O_o.*" : 0.9,
 	".*James Sandford.*" : 0.1,
 	".*(?:necrophilia|bestiality).*" : 0.5,
 	".*lol.*" : 0.95,
-	".*!!!+.*" : 0.95,
+	".*!!!+.*" : 0.95,	
 	".*nigger.*" : 0.5,
 	".*insert (?:disturbing|worrying|illigal) sexual act here.*" : 0.2,
 }
