@@ -172,7 +172,7 @@ class BeardBotModule(ModuleBase):
 	
 	#           Sorry but you have to take these people into account |
 	@on_addressed_match("tell (?:me|us) if (?:this|we) (?:gets (?:too? )bad|goes too? far)", re.I)
-	def on_tell_me_if_this_gets_bad(self, source_name, source_host, message):
+	def on_tell_me_if_this_gets_bad(source_name, source_host, message):
 		self.bot.say("I'll do what I can.")
 		self.auto_comment = True
 	
