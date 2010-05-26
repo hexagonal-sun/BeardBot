@@ -174,7 +174,8 @@ refrences and provided links.
 About
 -----
 Developed By [Jonathan Heathcote](http://github.com/mossblaser) with significant
- architecture contributions and some modules by [Tom Nixon](http://github.com/tomjnixon)
+architecture contributions and some modules by [Tom Nixon](http://github.com/tomjnixon)
+and some disturbing contributions by [James Sandford](http://github.com/j616s)
 
 All code GNU GPLv2, no warranties etc. etc.
 
