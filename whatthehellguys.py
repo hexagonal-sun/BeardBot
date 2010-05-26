@@ -94,7 +94,7 @@ RECOVERY_RATE_PER_MESSAGE = 1 / 30
 rules = {
 	".*rape.*" : 0.7,
 	".*(?:pr[0o]n|p[o0]rn).*" : 0.8,
-	".*(?:fap|jizz|shag|dogging|masturbate|anal|oral|bdsm|fisting).*" : 0.7,
+	".*(?:fap|jizz|cum|shag|dogging|masturbate|anal|oral|bdsm|fisting).*" : 0.7,
 	".*(?:fuck|cunt).*" : 0.8,
 	".*(?:shit|wanker|dick|penis|cock|tits|fun bags).*" : 0.9,
 	".*condom.*" : 0.9,
