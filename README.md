@@ -96,6 +96,9 @@ Other commands:
 
         beardbot: who is the happiest of them all?
     
+#### hokay
+Responds to various classic lines from The End of the World.
+    
 #### hyphen
 Simply corrects users who forget to apply Randal Munroe's translation of
 [hyphen](http://xkcd.com/37/)s one-word forwards when used in the form adjective-ass noun.
