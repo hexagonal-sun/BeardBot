@@ -14,7 +14,7 @@ class BeardBotModule(ModuleBase):
 		if description:
 			self.bot.say(description)
 		else:
-			self.bot.say("Fuck knows!?")
+			self.bot.say("Fuck knows!? Try http://acronyms.thefreedictionary.com/" + word)
 
 
 	def translate(self, word_to_find):
