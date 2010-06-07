@@ -23,10 +23,14 @@ class BeardBotModule(ModuleBase):
 
 	def translate(self, word_to_find):
 		for file_name in word_lists:
-			for line in filter(lambda l: len(l) and l[0] != '$',
-					   map(string.strip,
-					       open(file_name).xreadlines())):
-				word, desc = map(string.strip, line.replace('\t', ' ').split(' ', 1))
-				if word_to_find.upper() == word:
-					return desc
-		
+			try:
+				for line in filter(lambda l: len(l) and l[0] != '$',
+					                 map(string.strip,
+					                     open(file_name).xreadlines())):
+					word, desc = map(string.strip, line.replace('\t', ' ').split(' ', 1))
+					if word_to_find.upper() == word:
+						return desc
+			except IOError:
+				# This acronyms file couldn't be found
+				pass
+		return False
