@@ -18,7 +18,11 @@ class BeardBotModule(ModuleBase):
 
 
 	@on_channel_match("wtf else is (\S*[^\?])\??")
+<<<<<<< HEAD
 	def refer(self, source_name, source_host, message, word):
+=======
+	def define(self, source_name, source_host, message, word):
+>>>>>>> dd8fb70738144a3e432449eb279ebbc75d1c68b4
 		self.bot.say("Fine! Don't listen to me! Try http://acronyms.thefreedictionary.com/" + word)
 
 	def translate(self, word_to_find):
