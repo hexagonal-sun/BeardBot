@@ -17,6 +17,10 @@ class BeardBotModule(ModuleBase):
 			self.bot.say("Fuck knows!? Try http://acronyms.thefreedictionary.com/" + word)
 
 
+	@on_channel_match("wtf else is (\S*[^\?])\??")
+	def define(self, source_name, source_host, message, word):
+		self.bot.say("Fine! Don't listen to me! Try http://acronyms.thefreedictionary.com/" + word)
+
 	def translate(self, word_to_find):
 		for file_name in word_lists:
 			for line in filter(lambda l: len(l) and l[0] != '$',
